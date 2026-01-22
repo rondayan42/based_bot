@@ -195,9 +195,15 @@ async def init_db():
         await db.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 user_id INTEGER PRIMARY KEY,
-                count INTEGER DEFAULT 0
+                count INTEGER DEFAULT 0,
+                cringe_count INTEGER DEFAULT 0
             )
         ''')
+        try:
+            await db.execute('ALTER TABLE users ADD COLUMN cringe_count INTEGER DEFAULT 0')
+        except Exception:
+            pass
+
         await db.execute('''
             CREATE TABLE IF NOT EXISTS pills (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -224,6 +230,8 @@ async def on_message(message):
     content_lower = message.content.lower().strip()
     if content_lower.startswith("based"):
         await handle_based_event(message)
+    elif content_lower.startswith("cringe"):
+        await handle_cringe_event(message)
 
     # Process actual commands (like !profile)
     await bot.process_commands(message)
@@ -287,6 +295,46 @@ async def handle_based_event(message):
     
     await message.channel.send(response)
 
+async def handle_cringe_event(message):
+    target_user = None
+
+    # 1. Check if it is a Reply
+    if message.reference and message.reference.resolved:
+        if isinstance(message.reference.resolved, discord.Message):
+            target_user = message.reference.resolved.author
+
+    # 2. If not a reply, check if a user is Mentioned
+    elif message.mentions:
+        target_user = message.mentions[0]
+
+    # If no target found, ignore
+    if not target_user:
+        return
+
+    # Prevent self-cringe
+    if target_user.id == message.author.id:
+        await message.channel.send(f"{message.author.mention} You cannot call yourself cringe! That's... actually cringe.")
+        return
+
+    # Prevent bots
+    if target_user.bot:
+        await message.channel.send("Bots cannot be cringe.")
+        return
+
+    # Update Database
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute('''
+            INSERT INTO users (user_id, count, cringe_count) VALUES (?, 0, 1)
+            ON CONFLICT(user_id) DO UPDATE SET cringe_count = cringe_count + 1
+        ''', (target_user.id,))
+        await db.commit()
+        
+        cursor = await db.execute('SELECT cringe_count FROM users WHERE user_id = ?', (target_user.id,))
+        row = await cursor.fetchone()
+        new_count = row[0]
+
+    await message.channel.send(f"Cringe! {target_user.mention}'s cringe count is now **{new_count}**.")
+
 @bot.command(name="mybased")
 async def my_profile(ctx):
     """Shows your based count and recent pills."""
@@ -301,14 +349,15 @@ async def check_profile(ctx, member: discord.Member):
 async def show_profile(ctx, user):
     async with aiosqlite.connect(DB_NAME) as db:
         # Get Count
-        cursor = await db.execute('SELECT count FROM users WHERE user_id = ?', (user.id,))
+        cursor = await db.execute('SELECT count, cringe_count FROM users WHERE user_id = ?', (user.id,))
         row = await cursor.fetchone()
         
         if not row:
-            await ctx.send(f"{user.display_name} has no based count yet.")
+            await ctx.send(f"{user.display_name} has no based or cringe count yet.")
             return
 
         count = row[0]
+        cringe_count = row[1]
 
         # Get Pills (Limit to last 5)
         cursor = await db.execute('SELECT pill_text FROM pills WHERE user_id = ? ORDER BY id DESC LIMIT 5', (user.id,))
@@ -318,6 +367,7 @@ async def show_profile(ctx, user):
     
     embed = discord.Embed(title=f"Based Profile: {user.display_name}", color=0x00ff00)
     embed.add_field(name="Based Count", value=str(count), inline=False)
+    embed.add_field(name="Cringe Count", value=str(cringe_count), inline=False)
     embed.add_field(name="Recent Pills", value=pill_list, inline=False)
     
     await ctx.send(embed=embed)
