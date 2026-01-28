@@ -255,6 +255,61 @@ async def leaderboard(ctx):
 
     await ctx.send(embed=embed)
 
+@bot.command(name="help")
+async def help_command(ctx):
+    """Shows help information about all commands and how to use the bot."""
+    embed = discord.Embed(
+        title="📖 Based Count Bot - Help",
+        description="Track based and cringe counts, collect pills, and compete on the leaderboard!",
+        color=0x3498db
+    )
+    
+    # Commands Section
+    embed.add_field(
+        name="📋 Commands",
+        value=(
+            "**!mybased** - View your based/cringe count and pills\n"
+            "**!checkbased @user** - Check another user's stats\n"
+            "**!leaderboard** - View the top 5 most based users\n"
+            "**!help** - Show this help message"
+        ),
+        inline=False
+    )
+    
+    # Usage Section
+    embed.add_field(
+        name="✅ How to Give Based/Cringe",
+        value=(
+            "**Reply** to a message with \"based\" or \"cringe\"\n"
+            "**Mention** a user: `@User based` or `@User cringe`"
+        ),
+        inline=False
+    )
+    
+    # Pills Section
+    embed.add_field(
+        name="💊 How to Add Pills",
+        value=(
+            "Reply with \"based and [text]\"\n"
+            "Example: `based and logic pilled`"
+        ),
+        inline=False
+    )
+    
+    # Rules Section
+    embed.add_field(
+        name="⚠️ Rules",
+        value=(
+            "• You cannot base/cringe yourself\n"
+            "• Bots cannot receive based/cringe counts"
+        ),
+        inline=False
+    )
+    
+    embed.set_footer(text="Based Count Bot | Inspired by r/basedcount_bot")
+    
+    await ctx.send(embed=embed)
+
 # Run the bot
 if __name__ == "__main__":
     bot.run(TOKEN)

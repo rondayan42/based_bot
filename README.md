@@ -18,6 +18,7 @@ This project is inspired by the Reddit bot [basedcount_bot](https://github.com/b
 - `!mybased`: Shows your current based count, cringe count, and recent pills.
 - `!checkbased @user`: Checks the profile of a specific user.
 - `!leaderboard`: Shows the top 5 users by based count.
+- `!help`: Displays all available commands and how to use the bot.
 
 ## Usage
 
