@@ -12,7 +12,7 @@ This project is inspired by the Reddit bot [basedcount_bot](https://github.com/b
 - **Pills**: Captures text following the word "based" as a "pill" (e.g., "based and redpilled").
 - **Leaderboard**: Displays the top 5 most based users in the server.
 - **Profiles**: View your own or another user's stats and pill history.
-- **Persistence**: Uses a local SQLite database (`based_count.db`) to store data.
+- **Persistence**: Uses a SQLite database (`based_count.db`) to store data.
 
 ## Commands
 
@@ -51,6 +51,10 @@ To add a pill:
    python main.py
    ```
 
-## License
+## Legal
+ 
+ By using this bot, you agree to our [Terms of Service](TERMS_OF_SERVICE.md) and [Privacy Policy](PRIVACY_POLICY.md).
+ 
+ ## License
 
 MIT
