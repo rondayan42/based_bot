@@ -54,12 +54,16 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # Check if message starts with "based" (case-insensitive)
-    content_lower = message.content.lower().strip()
-    if content_lower.startswith("based"):
-        await handle_based_event(message)
-    elif content_lower.startswith("cringe"):
-        await handle_cringe_event(message)
+    # Check if message starts with "based" or "cringe" (case-insensitive), optionally preceded by a mention
+    content = message.content.strip()
+    match = re.match(r'^(?:<@!?\d+>\s+)?(based|cringe)', content, re.IGNORECASE)
+
+    if match:
+        keyword = match.group(1).lower()
+        if keyword == "based":
+            await handle_based_event(message)
+        elif keyword == "cringe":
+            await handle_cringe_event(message)
 
     # Process actual commands (like !profile)
     await bot.process_commands(message)
@@ -92,7 +96,8 @@ async def handle_based_event(message):
 
     # Extract "Pill" (text after 'based' and optional 'and')
     # Regex looks for "based", optionally "and", then captures the rest
-    match = re.search(r'^based(?:\s+and)?\s+(.*)', message.content, re.IGNORECASE)
+    # Updated to allow optional mention at start
+    match = re.search(r'^(?:<@!?\d+>\s+)?based(?:\s+and)?\s+(.*)', message.content.strip(), re.IGNORECASE)
     new_pill = match.group(1).strip() if match else None
     
     # Remove mentions from the pill text
