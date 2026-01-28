@@ -38,7 +38,7 @@ We use the collected information for the following purposes:
 
 We do **not** sell, trade, or rent your personal identification information to others.
 
-**Hosting Provider**: Our bot is hosted on **Wispbyte.com**. While data resides on their infrastructure as a service provider, they do not access or use user data for their own purposes.
+**Hosting Provider**: Our bot is hosted on **Wispbyte.com**. Data resides on their servers as part of the hosting service. For more information on how they handle data on their infrastructure, please refer to Wispbyte's [Privacy Policy](https://wispbyte.com/privacy) and [Terms of Service](https://wispbyte.com/terms).
 
 ## 6. Access and Control
 
