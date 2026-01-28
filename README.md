@@ -1,5 +1,6 @@
 # Based Count Bot (Discord)
 
+https://discord.com/oauth2/authorize?client_id=1465591527446155264
 A Discord bot that tracks "based" and "cringe" counts for users and collects "pills" (text associated with being based).
 
 This project is inspired by the Reddit bot [basedcount_bot](https://github.com/basedcount/basedcount_bot).
